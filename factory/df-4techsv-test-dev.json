@@ -1,0 +1,9 @@
+{
+	"name": "df-4techsv-test-dev",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "552860de-1c1b-4e26-9139-7ab3f3f5a3ce",
+		"tenantId": "712535fe-b29f-40a6-9da9-a795b4896cf3"
+	}
+}
