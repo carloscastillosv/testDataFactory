@@ -1,0 +1,17 @@
+{
+	"name": "ds_xml_magaya_stg",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "strg4techsvtest",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "testxml"
+			}
+		}
+	}
+}
