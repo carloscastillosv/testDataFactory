@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "df-4techsv-test-dev"
+		},
+		"strg4techsvtest_connectionString": {
+			"value": ""
+		},
+		"ls_4techsv_test_magaya_properties_typeProperties_url": {
+			"value": "http://94.74.69.208:3691/Invoke?Handler=CSSoapService"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
