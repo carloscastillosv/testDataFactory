@@ -156,8 +156,34 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Copy data1_copy2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "token",
+					"value": ""
+				}
 			}
 		],
+		"variables": {
+			"token": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "Magaya"
 		},
