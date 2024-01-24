@@ -3,82 +3,16 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Web1",
-				"type": "WebActivity",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"url": "http://94.74.69.208:3691/Invoke?Handler=CSSoapService",
-					"method": "POST",
-					"headers": {
-						"Content-Type": "application/xml",
-						"Accept": "*/*",
-						"Accept-Encoding": "gzip, deflate, br",
-						"Connection": "keep-alive",
-						"SOAPAction": "#StartSession"
-					},
-					"body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <StartSessionIn>\n      <user>novatechcdisv</user>\n      <pass>6kTYpTY7#^W5</pass>\n    </StartSessionIn>\n  </soap:Body>\n</soap:Envelope>"
-				}
-			},
-			{
-				"name": "Copy data1_copy1",
-				"type": "Copy",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "BinarySource",
-						"storeSettings": {
-							"type": "HttpReadSettings",
-							"requestMethod": "POST",
-							"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: #StartSession\nConnection: Keep-Alive\nContent-Type: application/xml\n",
-							"requestBody": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <StartSessionIn>\n      <user>novatechcdisv</user>\n      <pass>6kTYpTY7#^W5</pass>\n    </StartSessionIn>\n  </soap:Body>\n</soap:Envelope>",
-							"requestTimeout": ""
-						},
-						"formatSettings": {
-							"type": "BinaryReadSettings"
-						}
-					},
-					"sink": {
-						"type": "BinarySink",
-						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings",
-							"copyBehavior": "PreserveHierarchy"
-						}
-					},
-					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "ds_magaya_origin_bin",
-						"type": "DatasetReference"
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "ds_xml_magaya_stg",
-						"type": "DatasetReference"
-					}
-				]
-			},
-			{
 				"name": "Copy data1_copy2",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -93,8 +27,8 @@
 						"storeSettings": {
 							"type": "HttpReadSettings",
 							"requestMethod": "POST",
-							"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: #StartSession\nConnection: Keep-Alive\nContent-Type: application/xml\n",
-							"requestBody": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <StartSessionIn>\n      <user>novatechcdisv</user>\n      <pass>6kTYpTY7#^W5</pass>\n    </StartSessionIn>\n  </soap:Body>\n</soap:Envelope>",
+							"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: #StartSession\nConnection: Keep-Alive\nContent-Type: application/xml",
+							"requestBody": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <StartSessionIn>\n      <user>novatechcdiqsv</user>\n      <pass>6kTYpTY7#^W5</pass>\n    </StartSessionIn>\n  </soap:Body>\n</soap:Envelope>",
 							"requestTimeout": ""
 						},
 						"formatSettings": {
@@ -160,6 +94,23 @@
 			{
 				"name": "Set variable1",
 				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "cpy_data_start_time",
+					"value": {
+						"value": "@utcnow()",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable2",
+				"type": "SetVariable",
 				"dependsOn": [
 					{
 						"activity": "Copy data1_copy2",
@@ -174,13 +125,93 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"variableName": "cpy_data_end_time",
+					"value": {
+						"value": "@utcnow()",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Set variable2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"modifiedDatetimeStart": {
+								"value": "@variables('cpy_data_start_time')",
+								"type": "Expression"
+							},
+							"modifiedDatetimeEnd": {
+								"value": "@variables('cpy_data_end_time')",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.json",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "Json1",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": true
+				}
+			},
+			{
+				"name": "Set variable3",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
 					"variableName": "token",
-					"value": ""
+					"value": {
+						"value": "@activity('Lookup1').output.effectiveIntegrationRuntime",
+						"type": "Expression"
+					}
 				}
 			}
 		],
 		"variables": {
 			"token": {
+				"type": "String"
+			},
+			"cpy_data_start_time": {
+				"type": "String"
+			},
+			"cpy_data_end_time": {
 				"type": "String"
 			}
 		},
