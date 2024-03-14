@@ -1,0 +1,168 @@
+{
+	"name": "GetToken",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/xml",
+						"Accept": "*/*",
+						"Accept-Encoding": "gzip, deflate, br",
+						"Connection": "keep-alive",
+						"SOAPAction": "#StartSession"
+					},
+					"url": "http://94.74.69.208:3691/Invoke?Handler=CSSoapService",
+					"body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <StartSessionIn>\n      <user>novatechcdisv</user>\n      <pass>6kTYpTY7#^W5</pass>\n    </StartSessionIn>\n  </soap:Body>\n</soap:Envelope>"
+				}
+			},
+			{
+				"name": "Copy data1_copy1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "POST",
+							"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: #StartSession\nConnection: Keep-Alive\nContent-Type: application/xml\n",
+							"requestBody": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <StartSessionIn>\n      <user>novatechcdisv</user>\n      <pass>6kTYpTY7#^W5</pass>\n    </StartSessionIn>\n  </soap:Body>\n</soap:Envelope>",
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_magaya_origin_bin",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_xml_magaya_stg",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy data1_copy2",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "POST",
+							"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: #StartSession\nConnection: Keep-Alive\nContent-Type: application/xml\n",
+							"requestBody": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <StartSessionIn>\n      <user>novatechcdisv</user>\n      <pass>6kTYpTY7#^W5</pass>\n    </StartSessionIn>\n  </soap:Body>\n</soap:Envelope>",
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none",
+							"namespaces": true
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['soap:Envelope']['soap:Body']['snp:StartSession']['return']"
+								},
+								"sink": {
+									"path": "$['soap:Envelope']['soap:Body']['snp:StartSession']['return']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['soap:Envelope']['soap:Body']['snp:StartSession']['access_key']"
+								},
+								"sink": {
+									"path": "$['soap:Envelope']['soap:Body']['snp:StartSession']['access_key']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['soap:Envelope']['soap:Body']['soap:@encodingStyle']"
+								},
+								"sink": {
+									"path": "$['soap:Envelope']['soap:Body']['soap:@encodingStyle']"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Xml1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Json1",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "Magaya"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-01-10T21:48:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

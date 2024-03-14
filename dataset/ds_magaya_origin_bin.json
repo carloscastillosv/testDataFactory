@@ -1,0 +1,17 @@
+{
+	"name": "ds_magaya_origin_bin",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_4techsv_test_magaya",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
